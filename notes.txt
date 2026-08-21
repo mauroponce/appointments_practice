@@ -7,6 +7,29 @@ rails new . --database=postgresql
 # docker-compose.yml is how multiple containers work together
 
 # Rails doesn't assume we'll use docker compose in production, so that's not generated
-# After creating Dockerfile.dev and docker-compose.yml, build the containers:
 
+
+####### USEFUL DOCKER COMMANDS #######
+
+# build the containers
 docker compose build
+
+# Start everything
+docker compose up
+
+# Stop everything
+docker compose down
+
+# Rails commands
+docker compose exec web bin/rails (console | migrate | test)
+
+
+# Create dev and test databases
+docker compose run --rm web bin/rails db:create
+
+# Open PostgreSQL
+docker compose exec db psql \
+  -U postgres \
+  -d appointments_practice_development
+
+#######################################
