@@ -33,3 +33,12 @@ docker compose exec db psql \
   -d appointments_practice_development
 
 #######################################
+
+# Create models
+
+docker compose exec web bin/rails g model Account name:string active:boolean
+docker compose exec web bin/rails g model Customer account:references name:string email:string active:boolean
+docker compose exec web bin/rails g model Appointment account:references customer:references \
+  starts_at:datetime status:string price_cents:integer
+
+# Before migrating, inspect and update migrations if needed 
