@@ -1,2 +1,12 @@
 rails new . --database=postgresql
 
+# Generated Dockerfile is production-oriented Rails image, let's create Dockerfile.dev for a fast local dev image
+# And docker-compose.yml for local infrastructure
+
+# Dockerfile is how to build/run one Rails container
+# docker-compose.yml is how multiple containers work together
+
+# Rails doesn't assume we'll use docker compose in production, so that's not generated
+# After creating Dockerfile.dev and docker-compose.yml, build the containers:
+
+docker compose build
