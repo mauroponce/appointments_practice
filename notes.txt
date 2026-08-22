@@ -148,3 +148,83 @@ validates :service_id, uniqueness: { scope: :professional_id}
 # Add professional and service references to an appointment
 # For that we add a fk professional_id and service_id to appointments table
 docker compose exec web bin/rails g migration AddProfessionalAndServiceToAppointments professional:references service:references
+
+
+############## Add appointments API (first version, with errors on purpose) ###############
+# Add namespaced route and generate controller with the namespace
+docker compose exec web bin/rails g controller Api::V1::Appointments
+# Implement index, show and update routes
+
+# Check routes
+docker compose exec web bin/rails routes | grep appointments
+
+# Add some data by console:
+account = Account.create!(
+  name: "Downtown Beauty"
+)
+
+customer = account.customers.create!(
+  name: "Alice Johnson",
+  email: "alice@example.com"
+)
+
+professional = account.professionals.create!(
+  name: "Sofia Martinez",
+  email: "sofia@example.com"
+)
+
+service = account.services.create!(
+  name: "Haircut",
+  duration_minutes: 60,
+  price_cents: 30_000
+)
+
+ProfessionalService.create!(
+  professional: professional,
+  service: service
+)
+
+appointment = account.appointments.create!(
+  customer: customer,
+  professional: professional,
+  service: service,
+  starts_at: 1.day.from_now.change(hour: 14),
+  status: "pending",
+  price_cents: service.price_cents
+)
+
+# Check
+appointment.persisted?
+
+# Test API manually
+
+# Index
+curl http://localhost:3004/api/v1/appointments
+
+# Show
+curl http://localhost:3004/api/v1/appointments/1
+
+# Create
+curl -X POST \
+  http://localhost:3004/api/v1/appointments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "account_id": 2,
+      "customer_id": 2,
+      "professional_id": 3,
+      "service_id": 3,
+      "starts_at": "2026-08-25T15:00:00-03:00",
+      "status": "pending",
+      "price_cents": 25000
+    }
+  }'
+
+  # That will fail due to CSRF token missing
+  # We can add a parent Api::V1::BaseController and skip that check there.
+  # If later you authenticate the API using a Rails session cookie,
+  # then blindly disabling CSRF would be dangerous because browsers automatically send cookies with requests,
+  # which is exactly the threat CSRF protection is designed for.
+  # Since we'll use a Bearer token, skipping CSRF fov api/v1 is appropriate
+
+##########################################################

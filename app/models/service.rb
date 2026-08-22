@@ -5,6 +5,7 @@ class Service < ApplicationRecord
   has_many :appointments
 
   validates :name, presence: true
-  validates :duration_minutes, presence: true
+  validates :duration_minutes, presence: true, numericality: { greater_than: 0 }
   validates :price_cents, presence: true
+
 end
