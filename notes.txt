@@ -67,7 +67,7 @@ appointment = account.appointments.create!(customer: customer, starts_at: 1.day.
 
 # Installing Sidekiq & Redis
 # Add Redis and Sidekiq services to docker-compose.yml
-# Add sidekiq gem # Automatically installs redis as a dependency
+# Add sidekiq gem # Automatically installs redis-client as a dependency
 
 # Install new gems with
 docker compose run --rm web bundle install
@@ -104,6 +104,21 @@ docker compose logs -f sidekiq
 # sidekiq-1  | INFO  ... class=TestJob: Performed TestJob ... from Sidekiq(default) in 8.89ms
 # sidekiq-1  | INFO  ... class=TestJob elapsed=0.456: done
 
+######################################
 
+###### Use Redis for Rails cache #####
+# In Rails 8, :redis_cache_store explicitly requires the redis gem
+# Set in config.cache_store per env
 
+# Enable rails caching
+docker compose exec web bin/rails dev:cache
+# Action Controller caching enabled for development mode.
+
+# Test in rails console
+> Rails.cache.write("test", "hello")
+=> true
+appointments-practice(dev):003> Rails.cache.read('test')
+=> "hello"
+
+# Now redis has 2 roles in our app: Sidekique queue and Rails cache
 ######################################
