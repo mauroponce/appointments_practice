@@ -38,9 +38,17 @@ class Api::V1::AppointmentsController < Api::V1::BaseController
 
   def scoped_appointment_params
     scoped_params = appointment_params
-    scoped_params[:customer_id] = current_account.customers.find(scoped_params[:customer_id]).id
-    scoped_params[:professional_id] = current_account.professionals.find(scoped_params[:professional_id]).id
-    scoped_params[:service_id] = current_account.services.find(scoped_params[:service_id]).id
+    if scoped_params[:customer_id].present?
+      scoped_params[:customer_id] = current_account.customers.find(scoped_params[:customer_id]).id
+    end
+
+    if scoped_params[:professional_id].present?
+      scoped_params[:professional_id] = current_account.professionals.find(scoped_params[:professional_id]).id
+    end
+
+    if scoped_params[:service_id].present?
+      scoped_params[:service_id] = current_account.services.find(scoped_params[:service_id]).id
+    end
 
     scoped_params
   end

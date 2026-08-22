@@ -252,3 +252,24 @@ curl -H "X-Account-Id: 2" \
     }
   }'
 ##########################################################
+# Make scoped_appointment_params PATCH-safe
+# All the params are mandatory now, so a partial update like this would fail:
+{
+  "appointment": {
+    "starts_at": "2026-08-25T15:00:00-03:00"
+  }
+}
+# because customer_id, professional_id, and service_id are absent
+# so we only add those fields to scoped_appointment_params if present?
+
+curl -H "X-Account-Id: 2" \
+  -X PATCH \
+  http://localhost:3004/api/v1/appointments/4 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "starts_at": "2026-08-30T15:00:00-03:00",
+      "status": "confirmed",
+      "price_cents": 17000
+    }
+  }'
