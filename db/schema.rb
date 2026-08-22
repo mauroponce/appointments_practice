@@ -49,7 +49,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_22_012135) do
     t.bigint "service_id", null: false
     t.datetime "updated_at", null: false
     t.index ["professional_id", "service_id"], name: "index_professional_services_on_professional_id_and_service_id", unique: true
-    t.index ["professional_id"], name: "index_professional_services_on_professional_id"
     t.index ["service_id"], name: "index_professional_services_on_service_id"
   end
 

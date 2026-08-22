@@ -1,7 +1,7 @@
 class CreateProfessionalServices < ActiveRecord::Migration[8.1]
   def change
     create_table :professional_services do |t|
-      t.references :professional, null: false, foreign_key: true
+      t.references :professional, null: false, foreign_key: true, index: false
       t.references :service, null: false, foreign_key: true
 
       t.timestamps

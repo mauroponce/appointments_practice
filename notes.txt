@@ -137,3 +137,10 @@ add_index :professional_services, [:professional_id, :service_id], unique: true
 
 # Also add uniqueness validation for UX, but DB unique index is what guarantees data integrity
 validates :service_id, uniqueness: { scope: :professional_id}
+
+# Remove standalone professional_id.
+# Composite index [professional_id, service_id], already supports queries starting with professional_id.
+# it does: WHERE professional_id = 2
+# and also: WHERE professional_id = 2 AND service_id = 3
+# But that composite index doesn't support: WHERE service_id = 3, so we leave the service_id index Rails generated.
+# That's why order in composite indexes matters (leftmost principle)
