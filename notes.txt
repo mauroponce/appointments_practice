@@ -144,3 +144,7 @@ validates :service_id, uniqueness: { scope: :professional_id}
 # and also: WHERE professional_id = 2 AND service_id = 3
 # But that composite index doesn't support: WHERE service_id = 3, so we leave the service_id index Rails generated.
 # That's why order in composite indexes matters (leftmost principle)
+
+# Add professional and service references to an appointment
+# For that we add a fk professional_id and service_id to appointments table
+docker compose exec web bin/rails g migration AddProfessionalAndServiceToAppointments professional:references service:references

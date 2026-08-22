@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_22_012135) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_22_015019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,11 +26,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_22_012135) do
     t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
     t.integer "price_cents", default: 0, null: false
+    t.bigint "professional_id", null: false
+    t.bigint "service_id", null: false
     t.datetime "starts_at", null: false
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_appointments_on_account_id"
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
+    t.index ["professional_id"], name: "index_appointments_on_professional_id"
+    t.index ["service_id"], name: "index_appointments_on_service_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -75,6 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_22_012135) do
 
   add_foreign_key "appointments", "accounts"
   add_foreign_key "appointments", "customers"
+  add_foreign_key "appointments", "professionals"
+  add_foreign_key "appointments", "services"
   add_foreign_key "customers", "accounts"
   add_foreign_key "professional_services", "professionals"
   add_foreign_key "professional_services", "services"
