@@ -126,5 +126,14 @@ appointments-practice(dev):003> Rails.cache.read('test')
 # Create Professional and Service models
 docker compose exec web bin/rails g model Professional account:references name:string email:string active:boolean
 docker compose exec web bin/rails g model Service account:references name:string duration_minutes:integer price_cents:integer active:boolean
-
 # Update migrations and add associations. Not Professional and Services yet, will be a many to many
+
+# Create ProfesionalService model instead of a HABTM table, so that we can later add customer duration and other business changes
+docker compose exec web bin/rails g model ProfessionalService professional:references service:references
+
+# Since we want to ensure a professional doesn't have a duplicated service,
+# we add a unique composite index to that migration, so that the row [professional_id, service_id] is unique
+add_index :professional_services, [:professional_id, :service_id], unique: true
+
+# Also add uniqueness validation for UX, but DB unique index is what guarantees data integrity
+validates :service_id, uniqueness: { scope: :professional_id}
