@@ -20,9 +20,14 @@ docker compose up
 # Stop everything
 docker compose down
 
+# see Docker processes
+docker ps
+
+# Kill every Docker process
+docker kill $(docker ps -q)
+
 # Rails commands
 docker compose exec web bin/rails (console | db:migrate | test)
-
 
 # Create dev and test databases
 docker compose run --rm web bin/rails db:create
@@ -32,7 +37,10 @@ docker compose exec db psql \
   -U postgres \
   -d appointments_practice_development
 
-#######################################
+# Check services logs
+docker compose logs -f (web | db | sidekiq | redis)
+
+######################################
 
 # Create models
 
@@ -45,6 +53,9 @@ docker compose exec web bin/rails g model Appointment account:references custome
 # Critical integrity rules should live in PostgreSQL, not only in Rails validations.
 # Don't add indexes blindly, Rails already adds indexes for foreign keys
 
+# May need to change ownership of Rails-generated files from root to user
+sudo chown -R $USER:$USER .
+
 # Update generated models to add associations and validations
 # Run migrations (it creates schema.rb the first time)
 docker compose exec web bin/rails db:migrate
@@ -54,3 +65,45 @@ account = Account.create!(name: 'Test Salon')
 customer = account.customers.create!(name: 'John Doe', email: 'john@example.com')
 appointment = account.appointments.create!(customer: customer, starts_at: 1.day.from_now, price_cents: 25_000)
 
+# Installing Sidekiq & Redis
+# Add Redis and Sidekiq services to docker-compose.yml
+# Add sidekiq gem # Automatically installs redis as a dependency
+
+# Install new gems with
+docker compose run --rm web bundle install
+
+# docker compose run --rm is the universal, fail-safe choice for dependency updates, 
+# because it works regardless of whether your app containers are running or crashed
+# docker compose run creates a fresh, temporary container to run the command. --rm ensures it gets deleted as soon as the task finishes
+# docker compose exec runs inside already running container (no new container is created, nothing to remove)
+
+# And build and start again with latest Gemfile
+docker compose build
+docker compose up
+
+# Check that now we have a container for: web, postgres, sidekiq and redis
+docker ps
+
+######## WORKING WITH SIDEKIQ ########
+
+# Generate a Rails ApplicationJob
+docker compose exec web bin/rails g job Test
+
+# Open Rails console and enqueue a job
+TestJob.perform_later("Hello from Sidekiq!")
+
+# INFO  2026-08-22T00:17:47.460Z pid=22 tid=1z2: Sidekiq 8.1.7 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/0"}
+# Enqueued TestJob (Job ID: f4b67710-7e87-40e7-93e4-db8431e10c08) to Sidekiq(default) with arguments: "Hello from Sidekiq!"
+
+# Check logs
+docker compose logs -f sidekiq
+
+# sidekiq-1  | INFO  ... class=TestJob: start
+# sidekiq-1  | INFO  ... class=TestJob: Performing TestJob ... with arguments: "Hello from Sidekiq!"
+# sidekiq-1  | INFO  ... class=TestJob: Sidekiq test: Hello from Sidekiq!
+# sidekiq-1  | INFO  ... class=TestJob: Performed TestJob ... from Sidekiq(default) in 8.89ms
+# sidekiq-1  | INFO  ... class=TestJob elapsed=0.456: done
+
+
+
+######################################

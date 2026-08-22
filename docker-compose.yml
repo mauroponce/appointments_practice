@@ -13,6 +13,11 @@ services:
       timeout: 5s
       retries: 15
 
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
   web:
     build:
       context: .
@@ -27,12 +32,35 @@ services:
       DATABASE_HOST: db
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379/0
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     stdin_open: true
     tty: true
+  
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
 volumes:
   postgres_data:
+  redis_data:
   bundle_cache:
