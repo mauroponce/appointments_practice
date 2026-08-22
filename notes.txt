@@ -228,3 +228,27 @@ curl -X POST \
   # Since we'll use a Bearer token, skipping CSRF fov api/v1 is appropriate
 
 ##########################################################
+# Add tenant-scoped queries
+# Send a header with account id (temporal until we add auth token),
+# and use that for a global current_account filter at BaseController
+
+curl -H "X-Account-Id: 2" \
+  http://localhost:3004/api/v1/appointments
+
+# And for create and update, we scope permitted params in a separate scoped_appointment_params method
+
+curl -H "X-Account-Id: 2" \
+  -X POST \
+  http://localhost:3004/api/v1/appointments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "customer_id": 2,
+      "professional_id": 3,
+      "service_id": 3,
+      "starts_at": "2026-08-25T15:00:00-03:00",
+      "status": "pending",
+      "price_cents": 15000
+    }
+  }'
+##########################################################
