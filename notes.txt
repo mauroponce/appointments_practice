@@ -122,3 +122,9 @@ appointments-practice(dev):003> Rails.cache.read('test')
 
 # Now redis has 2 roles in our app: Sidekique queue and Rails cache
 ######################################
+
+# Create Professional and Service models
+docker compose exec web bin/rails g model Professional account:references name:string email:string active:boolean
+docker compose exec web bin/rails g model Service account:references name:string duration_minutes:integer price_cents:integer active:boolean
+
+# Update migrations and add associations. Not Professional and Services yet, will be a many to many

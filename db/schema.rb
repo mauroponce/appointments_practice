@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_21_230952) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_22_011010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,7 +43,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_230952) do
     t.index ["account_id"], name: "index_customers_on_account_id"
   end
 
+  create_table "professionals", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_professionals_on_account_id"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.integer "duration_minutes", null: false
+    t.string "name", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_services_on_account_id"
+  end
+
   add_foreign_key "appointments", "accounts"
   add_foreign_key "appointments", "customers"
   add_foreign_key "customers", "accounts"
+  add_foreign_key "professionals", "accounts"
+  add_foreign_key "services", "accounts"
 end

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  name: MyString
+  duration_minutes: 1
+  price_cents: 1
+  active: false
+
+two:
+  account: two
+  name: MyString
+  duration_minutes: 1
+  price_cents: 1
+  active: false
