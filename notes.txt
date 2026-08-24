@@ -323,3 +323,12 @@ curl -H "X-Account-Id: 2" \
   }'
 # {"error":"Record invalid","errors":{"customer":["must exist"],"professional":["must exist"],"service":["must exist"],"starts_at":["can't be blank"],"status":["is not included in the list"]}}
 
+##########################################################
+# Creating React app with TypeScript
+
+# nvm install 24 --reinstall-packages-from=current
+# nvm use 24
+# npm install -g npm@latest
+
+# We'll add a frontend folder inside rails root
+npm create vite@latest frontend -- --template react-ts
