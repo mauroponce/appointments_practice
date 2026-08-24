@@ -273,3 +273,53 @@ curl -H "X-Account-Id: 2" \
       "price_cents": 17000
     }
   }'
+##########################################################
+# Error handling in parent Api::V1::BaseController
+
+curl -H "X-Account-Id: 19" \
+  -X PATCH \
+  http://localhost:3004/api/v1/appointments/4 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "starts_at": "2026-08-30T15:00:00-03:00",
+      "status": "confirmed",
+      "price_cents": 17000
+    }
+  }'
+# ActiveRecord::RecordNotFound (Couldn't find Account with 'id'="19"):
+
+curl -H "X-Account-Id: 2" \
+  -X PATCH \
+  http://localhost:3004/api/v1/appointments/4 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "starts_at": "2026-08-30T15:00:00-03:00",
+      "status": "WRONG",
+      "price_cents": 17000
+    }
+  }'
+# ActiveRecord::RecordInvalid (Validation failed: Status is not included in the list)
+
+# Now we rescue from those exceptions at Api::V1::BaseController
+curl -H "X-Account-Id: 19" \
+  http://localhost:3004/api/v1/appointments
+# {"error":"Record not found","message":"Couldn't find Account with 'id'=\"19\""}
+
+# For render_record_invalid, we want to show all the validation errors when updating or creating
+# so we use: exception.record.errors.to_hash
+
+curl -H "X-Account-Id: 2" \
+  -X POST \
+  http://localhost:3004/api/v1/appointments/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appointment": {
+      "starts_at": "WRONG",
+      "status": "WRONG",
+      "price_cents": 17000
+    }
+  }'
+# {"error":"Record invalid","errors":{"customer":["must exist"],"professional":["must exist"],"service":["must exist"],"starts_at":["can't be blank"],"status":["is not included in the list"]}}
+
