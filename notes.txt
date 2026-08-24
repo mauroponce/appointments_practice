@@ -332,3 +332,34 @@ curl -H "X-Account-Id: 2" \
 
 # We'll add a frontend folder inside rails root
 npm create vite@latest frontend -- --template react-ts
+
+##########################################################
+Add CORS
+
+Add gem "rack-cors"
+# Install new gems with
+docker compose run --rm web bundle install
+
+# Add config/initializers/cors.rb, allowing frontend server http://localhost:5173, and restart Rails server
+docker compose restart web
+
+# Test with curl
+curl -i   -H "Origin: http://localhost:5173"   http://localhost:3004/api/v1/appointments
+# Response includes a header with this allowed origin - OK
+access-control-allow-origin: http://localhost:5173
+
+# The most realistic test is still from React, because CORS is enforced by browsers, not by curl.
+# so I make a fetch call from frontend/src/App.tsx - OK
+
+# CORS does not prevent the server from receiving HTTP requests.
+# It prevents browser JavaScript from reading responses when the browser's cross-origin rules aren't satisfied.
+# That's why curl always works regardless of CORS; curl doesn't enforce browser CORS policy
+
+# Make sure to check Disable Cache in Network tab of Dev Tools to confirm CORS is working ok.
+# For example if I allow port 5172 on the backend, I should see this from 5173:
+# Access to fetch at 'http://localhost:3004/api/v1/appointments' from origin 'http://localhost:5173'
+# has been blocked by CORS policy: Response to preflight request doesn't pass access control check:
+# No 'Access-Control-Allow-Origin' header is present on the requested resource.
+##########################################################
+
+

@@ -7,6 +7,26 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
+  console.log("origin:", window.location.origin)
+
+  fetch("http://localhost:3004/api/v1/appointments", {
+    headers: {
+      "X-Account-Id": "2",
+    },
+  })
+    .then((response) => {
+      console.log("response:", response)
+      console.log("status:", response.status)
+
+      return response.json()
+    })
+    .then((data) => {
+      console.log("DATA RECEIVED:", data)
+    })
+    .catch((error) => {
+      console.error("FETCH FAILED:", error)
+  })
+
   return (
     <>
       <section id="center">
