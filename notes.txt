@@ -365,5 +365,6 @@ curl -i   -H "Origin: http://localhost:5173"   http://localhost:3004/api/v1/appo
 # Displaying appointments in React page
 # Remove StrictMode wrapper from frontend/src/main.tsx, to prevent fetching appointments twice in useEffect
 
-
+##########################################################
+# Add Appointment type and type useState hook
 

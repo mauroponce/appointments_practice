@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import type { Appointment } from './types/appointment'
 
 function App() {
-  const [appointments, setAppointments] = useState([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     console.log("Fetching appointments...")
@@ -14,12 +16,17 @@ function App() {
     .then(response => response.json())
     .then(data => {
       setAppointments(data)
+      setLoading(false)
       console.log(data)
     })
     .catch(error => {
       console.error("FETCH FAILED:", error)
     })
   }, []) // With [], useEffect runs only once when the component mounts
+
+  if(loading) {
+    return <p>Loading appointments...</p>
+  }
 
   return (
     <>
@@ -31,7 +38,8 @@ function App() {
           <ul>
             {appointments.map(appointment => (
               <li key={appointment.id}>
-                <span>${appointment.price_cents}</span> - 
+                <span>${appointment.price_cents}</span>
+                {" - "}
                 <span>{appointment.status}</span>
               </li>
             ))}
