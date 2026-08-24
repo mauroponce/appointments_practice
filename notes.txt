@@ -334,7 +334,7 @@ curl -H "X-Account-Id: 2" \
 npm create vite@latest frontend -- --template react-ts
 
 ##########################################################
-Add CORS
+#Add CORS
 
 Add gem "rack-cors"
 # Install new gems with
@@ -346,7 +346,7 @@ docker compose restart web
 # Test with curl
 curl -i   -H "Origin: http://localhost:5173"   http://localhost:3004/api/v1/appointments
 # Response includes a header with this allowed origin - OK
-access-control-allow-origin: http://localhost:5173
+# access-control-allow-origin: http://localhost:5173
 
 # The most realistic test is still from React, because CORS is enforced by browsers, not by curl.
 # so I make a fetch call from frontend/src/App.tsx - OK
@@ -360,6 +360,10 @@ access-control-allow-origin: http://localhost:5173
 # Access to fetch at 'http://localhost:3004/api/v1/appointments' from origin 'http://localhost:5173'
 # has been blocked by CORS policy: Response to preflight request doesn't pass access control check:
 # No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
 ##########################################################
+# Displaying appointments in React page
+# Remove StrictMode wrapper from frontend/src/main.tsx, to prevent fetching appointments twice in useEffect
+
 
 
