@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
-import { fetchAppointments, fetchAppointment } from './api/appointments'
+import { fetchAppointments } from './api/appointments'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -13,9 +13,10 @@ function App() {
       try {
         setLoading(true)
 
-        const data = await fetchAppointment(4)
+        const data = await fetchAppointments()
 
-        setAppointments([data])
+        setAppointments(data)
+      } catch(error) {
         setError(error.message)
       } finally {
         setLoading(false)

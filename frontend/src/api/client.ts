@@ -8,7 +8,7 @@ export async function apiRequest<T>(
 	path: string,
 	options: RequestOptions = {}
 ): Promise<T> {
-	const { accountId = 2, headers, ...requestOptions } = options
+	const { accountId = 2, headers, ...requestOptions } = options // accountId will be replaced by an auth token
 
 	const response = await fetch(`${API_URL}/${path}`, {
 		...requestOptions,

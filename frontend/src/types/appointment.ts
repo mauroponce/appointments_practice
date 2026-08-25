@@ -1,12 +1,18 @@
 export interface Appointment {
-  account_id: number
-  created_at: string
-  customer_id: number
   id: number
-  price_cents: number
+  customer_id: number
   professional_id: number
   service_id: number
-  starts_at: string
+  price_cents: number
   status: string
-  updated_at: string
+  starts_at: string
+}
+
+export interface CreateAppointmentParams {
+  customer_id: number
+  professional_id: number
+  service_id: number
+  price_cents: number
+  status: string
+  starts_at: string
 }
