@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
+import { fetchAppointments } from './api/appointments'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -11,17 +12,9 @@ function App() {
     async function loadAppointments() {
       try {
         setLoading(true)
-        const response = await fetch("http://localhost:3004/api/v1/appointments", {
-          headers: {
-            "X-Account-Id": "2"
-          }
-        })
 
-        if(!response.ok) {
-          throw new Error(`Request failed with status: ${response.status}`)
-        }
+        const data = await fetchAppointments()
 
-        const data: Appointment[] = await response.json()
         setAppointments(data)
       } catch(error) {
         setError(error.message)
