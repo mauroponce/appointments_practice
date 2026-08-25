@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
-import { fetchAppointments } from './api/appointments'
+import { fetchAppointments, fetchAppointment } from './api/appointments'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -13,10 +13,9 @@ function App() {
       try {
         setLoading(true)
 
-        const data = await fetchAppointments()
+        const data = await fetchAppointment(4)
 
-        setAppointments(data)
-      } catch(error) {
+        setAppointments([data])
         setError(error.message)
       } finally {
         setLoading(false)
@@ -39,7 +38,7 @@ function App() {
     <>
       <section id="center">
         <h1>Appointments</h1>
-        {appointments.length === 0 ? (
+        {!loading && appointments.length === 0 ? (
           <p>No appointments found.</p>
         ) : (
           <ul>
