@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
-import { fetchAppointments } from './api/appointments'
+import { fetchAppointments,  } from './api/appointments'
 import { AppointmentList } from './components/AppointmentList'
+import { AppointmentForm } from './components/AppointmentForm'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
+
+
+  function handleAppointmentCreated(
+    appointment: Appointment
+  ) {
+    setAppointments([appointment, ...appointments])
+  }
 
   useEffect(() => {
     async function loadAppointments() {
@@ -40,6 +48,7 @@ function App() {
     <>
       <section id="center">
         <h1>Appointments</h1>
+        <AppointmentForm onCreated={handleAppointmentCreated}/>
         <AppointmentList appointments={appointments} />
         
       </section>

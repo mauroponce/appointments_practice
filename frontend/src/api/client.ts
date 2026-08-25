@@ -4,7 +4,7 @@ type RequestOptions = RequestInit & { // RequestInit is a native type that conta
   accountId?: number
 }
 
-export async function apiRequest<T>(
+export async function apiRequest<T>( // let the caller define the returned type
 	path: string,
 	options: RequestOptions = {}
 ): Promise<T> {
@@ -13,6 +13,7 @@ export async function apiRequest<T>(
 	const response = await fetch(`${API_URL}/${path}`, {
 		...requestOptions,
 		headers: {
+			"Content-Type": "application/json",
 			"X-Account-Id": accountId.toString(),
 			...headers
 		}
