@@ -4,28 +4,42 @@ import type { Appointment } from './types/appointment'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null)
 
   useEffect(() => {
-    console.log("Fetching appointments...")
-    fetch("http://localhost:3004/api/v1/appointments", {
-      headers: {
-        "X-Account-Id": "2"
+    async function loadAppointments() {
+      try {
+        setLoading(true)
+        const response = await fetch("http://localhost:3004/api/v1/appointments", {
+          headers: {
+            "X-Account-Id": "2"
+          }
+        })
+
+        if(!response.ok) {
+          throw new Error(`Request failed with status: ${response.status}`)
+        }
+
+        const data: Appointment[] = await response.json()
+        setAppointments(data)
+      } catch(error) {
+        setError(error.message)
+      } finally {
+        setLoading(false)
       }
-    })
-    .then(response => response.json())
-    .then(data => {
-      setAppointments(data)
-      setLoading(false)
-      console.log(data)
-    })
-    .catch(error => {
-      console.error("FETCH FAILED:", error)
-    })
-  }, []) // With [], useEffect runs only once when the component mounts
+    }
+
+    loadAppointments()
+  }, [])// With [], useEffect runs only once when the component mounts
+
 
   if(loading) {
     return <p>Loading appointments...</p>
+  }
+
+  if(error) {
+    return <p>{error}</p>
   }
 
   return (
