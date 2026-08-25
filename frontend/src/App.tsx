@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
 import { fetchAppointments } from './api/appointments'
+import { AppointmentList } from './components/AppointmentList'
 
 function App() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -39,19 +40,8 @@ function App() {
     <>
       <section id="center">
         <h1>Appointments</h1>
-        {!loading && appointments.length === 0 ? (
-          <p>No appointments found.</p>
-        ) : (
-          <ul>
-            {appointments.map(appointment => (
-              <li key={appointment.id}>
-                <span>${appointment.price_cents}</span>
-                {" - "}
-                <span>{appointment.status}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AppointmentList appointments={appointments} />
+        
       </section>
     </>
   )
