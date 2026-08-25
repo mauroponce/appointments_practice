@@ -18,8 +18,8 @@ export function AppointmentForm(
 	  starts_at: "2026-08-30T15:00:00-03:00"
 	})
 
-	const { error, setError } = useState<string | null>(null)
-  const { submitting, setSubmitting } = useState(false)
+	const [ error, setError ] = useState<string | null>(null)
+  const [ submitting, setSubmitting ] = useState(false)
 
 	function handleChange(
 		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -31,11 +31,33 @@ export function AppointmentForm(
 		}))
 	}
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    const appointment = await createAppointment(form)
-    onCreated(appointment)
-    console.log("handleSubmit called")
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault()
+    try {
+      setSubmitting(true)
+      setError(null)
+
+      const appointment = await createAppointment(form)
+      onCreated(appointment)
+
+      setForm((current) => ({
+        ...current,
+        price_cents: 0,
+        starts_at: ""
+      }))
+
+    } catch(error) {
+      if(error instanceof Error){
+        setError(error.message)
+      } else {
+        setError("Unknown error")
+      }
+
+    } finally {
+      setSubmitting(false)
+    }
   }
 
 	return(
@@ -108,8 +130,9 @@ export function AppointmentForm(
       {error && <p>{error}</p>}
 
       <button type="submit" disabled={submitting}>
-        {submitting ? "Creating..." : "Create appointment"}
+        { submitting ? "Creating" : "Create" }
       </button>
+
     </form>
 	)
 }
