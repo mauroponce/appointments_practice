@@ -1,10 +1,12 @@
+export type AppointmentStatus = | "pending" | "confirmed" | "cancelled"
+
 export interface Appointment {
   id: number
   customer_id: number
   professional_id: number
   service_id: number
   price_cents: number
-  status: string
+  status: AppointmentStatus
   starts_at: string
 }
 
@@ -13,6 +15,6 @@ export interface CreateAppointmentParams {
   professional_id: number
   service_id: number
   price_cents: number
-  status: string
+  status: AppointmentStatus
   starts_at: string
 }

@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { Appointment, CreateAppointmentParams } from '../types/appointments'
-import { createAppointment } from '../api/appointments'
+import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
 
 interface AppointmentFormProps {
   onCreated: (appointment: Appointment) => void
@@ -18,8 +18,18 @@ export function AppointmentForm(
 	  starts_at: "2026-08-30T15:00:00-03:00"
 	})
 
-	const [ error, setError ] = useState<string | null>(null)
+	const [ error, setError ]           = useState<string | null>(null)
   const [ submitting, setSubmitting ] = useState(false)
+  const [formData, setFormData]       = useState(null)
+
+  useEffect(() =>{
+    async function loadFormData() {
+        const formData = await fetchAppointmentsFormData()
+        setFormData(formData)
+    }
+
+    loadFormData()
+  }, [])
 
 	function handleChange(
 		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -54,7 +64,6 @@ export function AppointmentForm(
       } else {
         setError("Unknown error")
       }
-
     } finally {
       setSubmitting(false)
     }
@@ -65,33 +74,42 @@ export function AppointmentForm(
       <h2>Create appointment</h2>
 
       <label>
-        Customer ID
-        <input
-          type="number"
+        Customer
+        <select
           name="customer_id"
           value={form.customer_id}
           onChange={handleChange}
-        />
+        >
+          {formData && formData["customers"].map(customer => 
+            <option key={customer.id} value={customer.id}>{customer.name}</option>
+          )}
+        </select>
       </label>
 
       <label>
-        Professional ID
-        <input
-          type="number"
+        Professional
+        <select
           name="professional_id"
           value={form.professional_id}
           onChange={handleChange}
-        />
+        >
+          {formData && formData["professionals"].map(professional => 
+            <option key={professional.id} value={professional.id}>{professional.name}</option>
+          )}
+        </select>
       </label>
 
       <label>
-        Service ID
-        <input
-          type="number"
+        Service
+        <select
           name="service_id"
           value={form.service_id}
           onChange={handleChange}
-        />
+        >
+          {formData && formData["services"].map(service => 
+            <option key={service.id} value={service.id}>{service.name}</option>
+          )}
+        </select>
       </label>
 
       <label>
@@ -132,7 +150,6 @@ export function AppointmentForm(
       <button type="submit" disabled={submitting}>
         { submitting ? "Creating" : "Create" }
       </button>
-
     </form>
 	)
 }

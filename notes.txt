@@ -366,5 +366,5 @@ curl -i   -H "Origin: http://localhost:5173"   http://localhost:3004/api/v1/appo
 # Remove StrictMode wrapper from frontend/src/main.tsx, to prevent fetching appointments twice in useEffect
 
 ##########################################################
-# Add Appointment type and type useState hook
-
+curl -H "X-Account-Id: 2" http://localhost:3004/api/v1/appointments/form_data
+{"customers":[[2,"Alice Johnson"]],"professionals":[[3,"Sofia Martinez"]],"services":[[3,"Haircut"]]}

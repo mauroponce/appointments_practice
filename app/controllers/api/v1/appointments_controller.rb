@@ -23,6 +23,16 @@ class Api::V1::AppointmentsController < Api::V1::BaseController
     render json: appointment
   end
 
+  def form_data
+    data = {
+      customers:     current_account.customers.pluck(:id, :name).map{|id, name| { id: id, name: name }},
+      professionals: current_account.professionals.pluck(:id, :name).map{|id, name| { id: id, name: name }},
+      services:      current_account.services.pluck(:id, :name).map{|id, name| { id: id, name: name }}
+    }
+
+    render json: data
+  end
+
   private
 
   def appointment_params

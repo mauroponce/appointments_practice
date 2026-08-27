@@ -48,7 +48,7 @@ function App() {
     <>
       <section id="center">
         <h1>Appointments</h1>
-        <AppointmentForm onCreated={handleAppointmentCreated}/>
+        <AppointmentForm onCreated={handleAppointmentCreated} />
         <AppointmentList appointments={appointments} />
         
       </section>

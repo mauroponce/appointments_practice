@@ -21,3 +21,7 @@ export async function createAppointment(
     })
   })
 }
+
+export async function fetchAppointmentsFormData() { // Todo: add type
+  return apiRequest("appointments/form_data")
+}
