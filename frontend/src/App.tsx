@@ -17,12 +17,6 @@ function App() {
     queryFn: fetchAppointments // How to fetch that resource
   })
 
-  function handleAppointmentCreated(
-    appointment: Appointment
-  ) {
-    setAppointments([appointment, ...appointments])
-  }
-
   if(isLoading) {
     return <p>Loading appointments...</p>
   }
@@ -35,7 +29,7 @@ function App() {
     <>
       <section id="center">
         <h1>Appointments</h1>
-        <AppointmentForm onCreated={handleAppointmentCreated} />
+        <AppointmentForm/>
         <AppointmentList appointments={appointments} />
         
       </section>

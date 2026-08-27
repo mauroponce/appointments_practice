@@ -1,18 +1,17 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import type {
   Appointment, CreateAppointmentParams, AppointmentsFormData
 } from '../types/appointments'
 import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
 
-import { useQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  useMutation
+} from '@tanstack/react-query'
 
-interface AppointmentFormProps {
-  onCreated: (appointment: Appointment) => void
-}
 
-export function AppointmentForm(
-  { onCreated }: AppointmentFormProps
-){
+export function AppointmentForm(){
 	const [ form, setForm ] = useState<CreateAppointmentParams>({ // form is local state
 		customer_id: 0,
 	  professional_id: 0,
@@ -20,8 +19,6 @@ export function AppointmentForm(
 	  status: "pending",
 	  starts_at: ""
 	})
-
-  const [ submitting, setSubmitting ] = useState(false)
 
   const {
     data: formData = {},
@@ -51,31 +48,23 @@ export function AppointmentForm(
 		}))
 	}
 
+  const queryClient = useQueryClient()
+  const createMutation = useMutation({
+    mutationFn: createAppointment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["appointments"]
+      })
+      // We don't need to tell the parent that appointments collection has changed,
+      // so we remove the onCreated prop function and the setAppointments call at parent level
+    }
+  })
+
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault()
-    try {
-      setSubmitting(true)
-      setError(null)
-
-      const appointment = await createAppointment(form)
-      onCreated(appointment)
-
-      setForm((current) => ({
-        ...current,
-        starts_at: ""
-      }))
-
-    } catch(error) {
-      if(error instanceof Error){
-        setError(error.message)
-      } else {
-        setError("Unknown error")
-      }
-    } finally {
-      setSubmitting(false)
-    }
+    createMutation.mutate(form) // Pass the argument that was used before: createAppointment(form)
   }
 
   if (isLoading) {
@@ -153,8 +142,8 @@ export function AppointmentForm(
 
       {formDataError && <p>{formDataError}</p>}
 
-      <button type="submit" disabled={submitting}>
-        { submitting ? "Creating" : "Create" }
+      <button type="submit" disabled={createMutation.isPending}>
+        { createMutation.isPending ? "Creating" : "Create" }
       </button>
     </form>
 	)

@@ -376,9 +376,17 @@ curl -H "X-Account-Id: 2" http://localhost:3004/api/v1/appointments/form_data
 
 # Queries for server state: To fetch data from a server and handle state changes, we now use useQuery. That already handles loading and error states
 
-# Mutatios: For server-changing operations, such as creating, updating or deleting records, we now use useMutation
+# Mutations: For server-changing operations, such as creating, updating or deleting records, we now use useMutation
 
 # Install package
 npm install @tanstack/react-query
 
 # Wrap App with QueryClientProvider from TanStack
+# Use useQuery for API fetching, useMutation for server-changing operations, useQueryClient to invalidate in-memory cached state (appointments)
+
+# TanStack Query mutations already gives us:
+# createMutation.isPending
+# createMutation.isError
+# createMutation.error
+
+# Now the order of the appointments is the one from the api, before it was appended or prepended by setAppointments hook
