@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import type { Appointment } from './types/appointment'
-import { fetchAppointments,  } from './api/appointments'
+import { fetchAppointments } from './api/appointments'
 import { AppointmentList } from './components/AppointmentList'
 import { AppointmentForm } from './components/AppointmentForm'
 
-function App() {
-  const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(null)
+import { useQuery } from '@tanstack/react-query'
 
+function App() {
+  const {
+    data: appointments = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ["appointments"], // The cached resource
+    queryFn: fetchAppointments // How to fetch that resource
+  })
 
   function handleAppointmentCreated(
     appointment: Appointment
@@ -17,31 +23,12 @@ function App() {
     setAppointments([appointment, ...appointments])
   }
 
-  useEffect(() => {
-    async function loadAppointments() {
-      try {
-        setLoading(true)
-
-        const data = await fetchAppointments()
-
-        setAppointments(data)
-      } catch(error) {
-        setError(error.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadAppointments()
-  }, [])// With [], useEffect runs only once when the component mounts
-
-
-  if(loading) {
+  if(isLoading) {
     return <p>Loading appointments...</p>
   }
 
   if(error) {
-    return <p>{error}</p>
+    return <p>Error: {error.message}</p>
   }
 
   return (

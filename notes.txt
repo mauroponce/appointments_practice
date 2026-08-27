@@ -368,3 +368,17 @@ curl -i   -H "Origin: http://localhost:5173"   http://localhost:3004/api/v1/appo
 ##########################################################
 curl -H "X-Account-Id: 2" http://localhost:3004/api/v1/appointments/form_data
 {"customers":[[2,"Alice Johnson"]],"professionals":[[3,"Sofia Martinez"]],"services":[[3,"Haircut"]]}
+##########################################################
+# TanStack Query
+# It separates server state from local UI state.
+
+# Local UI state: For form inputs, modals, and any other UI state, we keep using setState
+
+# Queries for server state: To fetch data from a server and handle state changes, we now use useQuery. That already handles loading and error states
+
+# Mutatios: For server-changing operations, such as creating, updating or deleting records, we now use useMutation
+
+# Install package
+npm install @tanstack/react-query
+
+# Wrap App with QueryClientProvider from TanStack
