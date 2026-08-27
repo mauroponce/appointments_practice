@@ -387,6 +387,6 @@ npm install @tanstack/react-query
 # TanStack Query mutations already gives us:
 # createMutation.isPending
 # createMutation.isError
-# createMutation.error
+# createMutation.error // would catch a Rails non-successful response error for creation, like 404, 422, 500
 
 # Now the order of the appointments is the one from the api, before it was appended or prepended by setAppointments hook

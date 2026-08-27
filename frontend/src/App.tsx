@@ -13,7 +13,7 @@ function App() {
     isLoading,
     error
   } = useQuery({
-    queryKey: ["appointments"], // The cached resource
+    queryKey: ["appointments", "list"], // The cached resource
     queryFn: fetchAppointments // How to fetch that resource
   })
 

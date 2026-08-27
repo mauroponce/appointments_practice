@@ -1,7 +1,5 @@
 import { useState } from "react"
-import type {
-  Appointment, CreateAppointmentParams, AppointmentsFormData
-} from '../types/appointments'
+import type { CreateAppointmentParams } from '../types/appointments'
 import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
 
 import {
@@ -21,7 +19,7 @@ export function AppointmentForm(){
 	})
 
   const {
-    data: formData = {},
+    data: formData, // Keep it undefined, type will be infered from fetchAppointmentsFormData API call (AppointmentsFormData)
     isLoading,
     error: formDataError // rename TanStack Query error to specific formDataError
   } = useQuery({
@@ -53,22 +51,38 @@ export function AppointmentForm(){
     mutationFn: createAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["appointments"]
+        queryKey: ["appointments", "list"]
+        // We have created an appointment but we still have the same customers, professionals and services,
+        // so formData remains cached, we don't invalidate ["appointments", "formData"] for this case
       })
       // We don't need to tell the parent that appointments collection has changed,
       // so we remove the onCreated prop function and the setAppointments call at parent level
+
+      // Reset form (local UI state), on this mutation callback
+      setForm({
+        customer_id: 0,
+        professional_id: 0,
+        service_id: 0,
+        status: "pending",
+        starts_at: ""
+      })
     }
   })
 
-  async function handleSubmit(
+  function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault()
     createMutation.mutate(form) // Pass the argument that was used before: createAppointment(form)
+    // .mutate is callback oriented. If we need a Promise, we use .mutateAsync
   }
 
   if (isLoading) {
     return <p>Loading...</p>
+  }
+
+  if(!formData) {
+    return null
   }
 
 	return(
@@ -82,8 +96,8 @@ export function AppointmentForm(){
           value={form.customer_id}
           onChange={handleChange}
         >
-          <option value="">-- select customer --</option>
-          {formData?.customers.map(customer => 
+          <option value={0}>-- select customer --</option>
+          {formData.customers.map(customer => 
             <option key={customer.id} value={customer.id}>{customer.name}</option>
           )}
         </select>
@@ -96,8 +110,8 @@ export function AppointmentForm(){
           value={form.professional_id}
           onChange={handleChange}
         >
-          <option value="">-- select professional --</option>
-          {formData?.professionals.map(professional => 
+          <option value={0}>-- select professional --</option>
+          {formData.professionals.map(professional => 
             <option key={professional.id} value={professional.id}>{professional.name}</option>
           )}
         </select>
@@ -110,8 +124,8 @@ export function AppointmentForm(){
           value={form.service_id}
           onChange={handleChange}
         >
-          <option value="">-- select service --</option>
-          {formData?.services.map(service => 
+          <option value={0}>-- select service --</option>
+          {formData.services.map(service => 
             <option key={service.id} value={service.id}>{service.name}</option>
           )}
         </select>
@@ -140,7 +154,13 @@ export function AppointmentForm(){
         </select>
       </label>
 
-      {formDataError && <p>{formDataError}</p>}
+      {formDataError && (
+        <p>{formDataError.message}</p>
+      )}
+
+      {createMutation.isError && (
+        <p>{createMutation.error.message}</p>
+      )}
 
       <button type="submit" disabled={createMutation.isPending}>
         { createMutation.isPending ? "Creating" : "Create" }
