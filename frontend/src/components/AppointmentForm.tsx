@@ -13,7 +13,7 @@ interface AppointmentFormProps {
 export function AppointmentForm(
   { onCreated }: AppointmentFormProps
 ){
-	const [ form, setForm ] = useState<CreateAppointmentParams>({
+	const [ form, setForm ] = useState<CreateAppointmentParams>({ // form is local state
 		customer_id: 0,
 	  professional_id: 0,
 	  service_id: 0,
@@ -22,9 +22,6 @@ export function AppointmentForm(
 	})
 
   const [ submitting, setSubmitting ] = useState(false)
-	// const [ error, setError ]           = useState<string | null>(null)
-  // const [formData, setFormData]       = useState<AppointmentsFormData | null>(null)
-  // const [loading, setLoading]         = useState(true)
 
   const {
     data: formData = {},
@@ -35,26 +32,6 @@ export function AppointmentForm(
     // TanStack Query keys are hierarchical, invalidating "appointments" will invalidate all keys starting with "appointments"
     queryFn: fetchAppointmentsFormData
   })
-
-  // useEffect(() =>{
-  //   async function loadFormData() {
-  //     try {
-  //       const formData = await fetchAppointmentsFormData()
-  //       setFormData(formData)
-
-  //     } catch(error) {
-  //       if(error instanceof Error){
-  //         setError(error.message)
-  //       } else {
-  //         setError("Unknown error")
-  //       }
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-
-  //   loadFormData()
-  // }, [])
 
 	function handleChange(
 		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
