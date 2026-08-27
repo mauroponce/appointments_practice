@@ -18,3 +18,9 @@ export interface CreateAppointmentParams {
   status: AppointmentStatus
   starts_at: string
 }
+
+export interface AppointmentsFormData {
+  customers:     { id: number, name: string }[]
+  services:      { id: number, name: string }[]
+  professionals: { id: number, name: string }[]
+}

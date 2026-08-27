@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
-import type { Appointment, CreateAppointmentParams } from '../types/appointments'
+import type {
+  Appointment, CreateAppointmentParams, AppointmentsFormData
+} from '../types/appointments'
 import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
 
 interface AppointmentFormProps {
@@ -20,12 +22,25 @@ export function AppointmentForm(
 
 	const [ error, setError ]           = useState<string | null>(null)
   const [ submitting, setSubmitting ] = useState(false)
-  const [formData, setFormData]       = useState(null)
+  const [formData, setFormData]       = useState<AppointmentsFormData>(null)
+  const [loading, setLoading]         = useState(false)
 
   useEffect(() =>{
     async function loadFormData() {
+      try {
+        setLoading(true)
         const formData = await fetchAppointmentsFormData()
         setFormData(formData)
+
+      } catch(error) {
+        if(error instanceof Error){
+          setError(error.message)
+        } else {
+          setError("Unknown error")
+        }
+      } finally {
+        setLoading(false)
+      }
     }
 
     loadFormData()
@@ -67,6 +82,10 @@ export function AppointmentForm(
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (loading) {
+    return <p>Loading...</p>
   }
 
 	return(
