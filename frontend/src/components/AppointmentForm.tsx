@@ -4,6 +4,8 @@ import type {
 } from '../types/appointments'
 import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
 
+import { useQuery } from '@tanstack/react-query'
+
 interface AppointmentFormProps {
   onCreated: (appointment: Appointment) => void
 }
@@ -19,30 +21,40 @@ export function AppointmentForm(
 	  starts_at: ""
 	})
 
-	const [ error, setError ]           = useState<string | null>(null)
   const [ submitting, setSubmitting ] = useState(false)
-  const [formData, setFormData]       = useState<AppointmentsFormData | null>(null)
-  const [loading, setLoading]         = useState(true)
+	// const [ error, setError ]           = useState<string | null>(null)
+  // const [formData, setFormData]       = useState<AppointmentsFormData | null>(null)
+  // const [loading, setLoading]         = useState(true)
 
-  useEffect(() =>{
-    async function loadFormData() {
-      try {
-        const formData = await fetchAppointmentsFormData()
-        setFormData(formData)
+  const {
+    data: formData = {},
+    isLoading,
+    error: formDataError // rename TanStack Query error to specific formDataError
+  } = useQuery({
+    queryKey: ["appointments", "formData"],
+    // TanStack Query keys are hierarchical, invalidating "appointments" will invalidate all keys starting with "appointments"
+    queryFn: fetchAppointmentsFormData
+  })
 
-      } catch(error) {
-        if(error instanceof Error){
-          setError(error.message)
-        } else {
-          setError("Unknown error")
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
+  // useEffect(() =>{
+  //   async function loadFormData() {
+  //     try {
+  //       const formData = await fetchAppointmentsFormData()
+  //       setFormData(formData)
 
-    loadFormData()
-  }, [])
+  //     } catch(error) {
+  //       if(error instanceof Error){
+  //         setError(error.message)
+  //       } else {
+  //         setError("Unknown error")
+  //       }
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   loadFormData()
+  // }, [])
 
 	function handleChange(
 		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -89,7 +101,7 @@ export function AppointmentForm(
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return <p>Loading...</p>
   }
 
@@ -162,7 +174,7 @@ export function AppointmentForm(
         </select>
       </label>
 
-      {error && <p>{error}</p>}
+      {formDataError && <p>{formDataError}</p>}
 
       <button type="submit" disabled={submitting}>
         { submitting ? "Creating" : "Create" }
