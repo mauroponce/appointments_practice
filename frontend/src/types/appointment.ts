@@ -14,7 +14,6 @@ export interface CreateAppointmentParams {
   customer_id: number
   professional_id: number
   service_id: number
-  price_cents: number
   status: AppointmentStatus
   starts_at: string
 }

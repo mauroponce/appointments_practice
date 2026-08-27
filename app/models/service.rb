@@ -8,4 +8,5 @@ class Service < ApplicationRecord
   validates :duration_minutes, presence: true, numericality: { greater_than: 0 }
   validates :price_cents, presence: true
 
+  scope :active, -> { where(active: true) }
 end

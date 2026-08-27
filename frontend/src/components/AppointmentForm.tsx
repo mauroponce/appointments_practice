@@ -12,23 +12,21 @@ export function AppointmentForm(
   { onCreated }: AppointmentFormProps
 ){
 	const [ form, setForm ] = useState<CreateAppointmentParams>({
-		customer_id: 2,
-	  professional_id: 3,
-	  service_id: 3,
-	  price_cents: 20000,
+		customer_id: 0,
+	  professional_id: 0,
+	  service_id: 0,
 	  status: "pending",
-	  starts_at: "2026-08-30T15:00:00-03:00"
+	  starts_at: ""
 	})
 
 	const [ error, setError ]           = useState<string | null>(null)
   const [ submitting, setSubmitting ] = useState(false)
-  const [formData, setFormData]       = useState<AppointmentsFormData>(null)
-  const [loading, setLoading]         = useState(false)
+  const [formData, setFormData]       = useState<AppointmentsFormData | null>(null)
+  const [loading, setLoading]         = useState(true)
 
   useEffect(() =>{
     async function loadFormData() {
       try {
-        setLoading(true)
         const formData = await fetchAppointmentsFormData()
         setFormData(formData)
 
@@ -50,9 +48,17 @@ export function AppointmentForm(
 		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 	){
 		const { name, value } = event.target;
+    const numericFields = [
+      "customer_id",
+      "professional_id",
+      "service_id"
+    ]
+
 		setForm((current) => ({
 			...current,
-			[name]: name.endsWith('_id') ? Number(value) : value
+			[name]: numericFields.includes(name)
+        ? Number(value)
+        : value
 		}))
 	}
 
@@ -69,7 +75,6 @@ export function AppointmentForm(
 
       setForm((current) => ({
         ...current,
-        price_cents: 0,
         starts_at: ""
       }))
 
@@ -99,7 +104,8 @@ export function AppointmentForm(
           value={form.customer_id}
           onChange={handleChange}
         >
-          {formData && formData["customers"].map(customer => 
+          <option value="">-- select customer --</option>
+          {formData?.customers.map(customer => 
             <option key={customer.id} value={customer.id}>{customer.name}</option>
           )}
         </select>
@@ -112,7 +118,8 @@ export function AppointmentForm(
           value={form.professional_id}
           onChange={handleChange}
         >
-          {formData && formData["professionals"].map(professional => 
+          <option value="">-- select professional --</option>
+          {formData?.professionals.map(professional => 
             <option key={professional.id} value={professional.id}>{professional.name}</option>
           )}
         </select>
@@ -125,7 +132,8 @@ export function AppointmentForm(
           value={form.service_id}
           onChange={handleChange}
         >
-          {formData && formData["services"].map(service => 
+          <option value="">-- select service --</option>
+          {formData?.services.map(service => 
             <option key={service.id} value={service.id}>{service.name}</option>
           )}
         </select>
@@ -137,16 +145,6 @@ export function AppointmentForm(
           type="datetime-local"
           name="starts_at"
           value={form.starts_at}
-          onChange={handleChange}
-        />
-      </label>
-
-      <label>
-        Price
-        <input
-          type="number"
-          name="price_cents"
-          value={form.price_cents}
           onChange={handleChange}
         />
       </label>

@@ -3,4 +3,6 @@ class Customer < ApplicationRecord
   has_many :appointments
 
   validates :name, presence: true
+
+  scope :active, -> { where(active: true) }
 end
