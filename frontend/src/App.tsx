@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import type { Appointment } from './types/appointment'
 import { fetchAppointments } from './api/appointments'
-import { AppointmentList } from './components/AppointmentList'
-import { AppointmentForm } from './components/AppointmentForm'
+import { AppointmentsPage } from './components/AppointmentsPage'
 
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,14 +26,9 @@ function App() {
   }
 
   return (
-    <>
-      <section id="center">
-        <h1>Appointments</h1>
-        <AppointmentForm/>
-        <AppointmentList appointments={appointments} />
-        
-      </section>
-    </>
+    <Routes>
+      <Route path="/" element={<AppointmentsPage appointments={appointments} />} />      
+    </Routes>
   )
 }
 
