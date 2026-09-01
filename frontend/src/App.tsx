@@ -4,6 +4,7 @@ import './App.css'
 import type { Appointment } from './types/appointment'
 import { fetchAppointments } from './api/appointments'
 import { AppointmentsPage } from './components/AppointmentsPage'
+import { EditAppointmentPage } from './components/EditAppointmentPage'
 
 import { useQuery } from '@tanstack/react-query'
 
@@ -27,7 +28,8 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<AppointmentsPage appointments={appointments} />} />      
+      <Route path="/" element={<AppointmentsPage appointments={appointments} />} />
+      <Route path="/appointments/:id/edit" element={<EditAppointmentPage />}/>
     </Routes>
   )
 }

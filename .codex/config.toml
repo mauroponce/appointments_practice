@@ -1,0 +1,4 @@
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp", "--api-key", "ctx7sk-d69cf8eb-823a-449d-ba67-e0203781f423"]
+startup_timeout_sec = 20
