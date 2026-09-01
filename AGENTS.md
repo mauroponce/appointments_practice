@@ -44,3 +44,14 @@ supplement this file.
 ## Handoff
 
 - State what changed, which commands passed, and any assumptions or follow-up work.
+
+## Documentation
+
+- For framework, library, SDK, CLI, or API-specific questions, use the Context7 MCP
+  connection before web search.
+- Prefer documentation from the official or primary source returned by Context7.
+- Use web search only when Context7 cannot provide the needed documentation, or for
+  non-library information such as incidents, product announcements, or third-party
+  service status.
+- Do not use documentation lookup for routine refactors or code changes that can be
+  understood from the repository itself.
