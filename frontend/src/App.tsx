@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
-import type { Appointment } from './types/appointment'
 import { fetchAppointments } from './api/appointments'
 import { AppointmentsPage } from './components/AppointmentsPage'
 import { EditAppointmentPage } from './components/EditAppointmentPage'

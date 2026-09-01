@@ -1,30 +1,37 @@
-# Frontend conventions
+# React frontend guide
+
+This directory is a Vite + React 19 + TypeScript application that consumes the Rails
+API. These instructions supplement the repository `AGENTS.md`.
 
 ## Before changing code
-- Inspect the nearest components, tests, package scripts, and existing patterns first.
-- Preserve the existing framework, router, state-management, styling, and component-library choices.
-- Do not introduce a new dependency or UI framework unless the task requires it.
 
-## React
-- Prefer function components and hooks.
-- Keep state local and minimal; derive values during render instead of synchronizing redundant state with effects.
-- Use effects only for synchronizing with external systems (network, browser APIs, subscriptions, etc.).
-- Extract a custom hook only when behavior is genuinely reused or meaningfully simplifies the component.
-- Keep components focused; split only when it improves clarity or reuse.
+- Inspect nearby components, types, API modules, and package scripts first.
+- Preserve the existing React Router, TanStack Query, ESLint, and CSS approach.
+- Do not add a dependency, UI kit, state library, or styling system unless the task
+  requires it.
+
+## React and data
+
+- Prefer function components and hooks. Keep state local and minimal; derive values
+  during render instead of duplicating them in state.
+- Use effects only to synchronize with external systems such as browser APIs or
+  subscriptions. Keep data fetching and caching in the existing TanStack Query layer.
+- Model API responses in `src/types/` and centralize requests in `src/api/`.
+- Represent loading, error, empty, and success states deliberately.
+- When an API contract changes, update the Rails endpoint, client function, TypeScript
+  types, and UI together.
 
 ## UI and accessibility
-- Reuse existing design tokens, primitives, and shared components.
-- Use semantic HTML first; provide labels, keyboard support, visible focus states, and meaningful loading/error/empty states.
-- Do not use clickable `div`s when a `button`, `a`, `input`, or other native control is appropriate.
-- Avoid hard-coded colors, spacing, breakpoints, and z-index values when project tokens exist.
 
-## Data and forms
-- Follow the existing data-fetching and caching approach.
-- Treat async states explicitly: loading, error, empty, and success.
-- Validate forms on both client and server when applicable; display actionable field-level errors.
-- Do not expose server-only environment variables or secrets in client code.
+- Reuse existing components and CSS patterns before introducing new abstractions.
+- Prefer semantic HTML and native controls. Provide labels, keyboard operation, visible
+  focus styles, and useful loading/error messages.
+- Do not use clickable `div`s where a native button, link, or form control fits.
 
-## Quality
-- Update or add focused tests for changed behavior.
-- Run the narrowest relevant test, typecheck, lint, and build commands defined by this project.
-- Keep TypeScript strict: avoid `any`, unsafe casts, and suppressed errors unless justified locally.
+## TypeScript and quality
+
+- Keep TypeScript strict: avoid `any`, unjustified casts, and suppressed errors.
+- Add or update focused tests when a test setup exists; do not add a test framework
+  solely for a small change without discussing it.
+- Verify with `npm run check` from this directory (or
+  `npm --prefix frontend run check` from the repository root).

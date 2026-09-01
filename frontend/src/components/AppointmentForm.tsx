@@ -1,6 +1,6 @@
 import { useState } from "react"
-import type { CreateAppointmentParams } from '../types/appointments'
-import { createAppointment, fetchAppointmentsFormData } from '../api/appointments'
+import type { Appointment, CreateAppointmentParams } from '../types/appointment'
+import { createAppointment, fetchAppointmentsFormData, updateAppointment } from '../api/appointments'
 
 import {
   useQuery,
@@ -9,14 +9,28 @@ import {
 } from '@tanstack/react-query'
 
 
-export function AppointmentForm(){
-	const [ form, setForm ] = useState<CreateAppointmentParams>({ // form is local state
-		customer_id: 0,
-	  professional_id: 0,
-	  service_id: 0,
-	  status: "pending",
-	  starts_at: ""
-	})
+interface AppointmentFormProps {
+  appointment?: Appointment
+}
+
+export function AppointmentForm({ appointment }: AppointmentFormProps){
+	const [ form, setForm ] = useState<CreateAppointmentParams>(() =>
+    appointment
+      ? {
+          customer_id: appointment.customer_id,
+          professional_id: appointment.professional_id,
+          service_id: appointment.service_id,
+          status: appointment.status,
+          starts_at: appointment.starts_at.slice(0, 16)
+        }
+      : {
+          customer_id: 0,
+          professional_id: 0,
+          service_id: 0,
+          status: "pending",
+          starts_at: ""
+        }
+  )
 
   const {
     data: formData, // Keep it undefined, type will be infered from fetchAppointmentsFormData API call (AppointmentsFormData)
@@ -48,24 +62,30 @@ export function AppointmentForm(){
 
   const queryClient = useQueryClient()
   const createMutation = useMutation({
-    mutationFn: createAppointment,
+    mutationFn: (params: CreateAppointmentParams) =>
+      appointment ? updateAppointment(appointment.id, params) : createAppointment(params),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["appointments", "list"]
         // We have created an appointment but we still have the same customers, professionals and services,
         // so formData remains cached, we don't invalidate ["appointments", "formData"] for this case
       })
+      if (appointment) {
+        queryClient.invalidateQueries({ queryKey: ["appointments", appointment.id] })
+      }
       // We don't need to tell the parent that appointments collection has changed,
       // so we remove the onCreated prop function and the setAppointments call at parent level
 
       // Reset form (local UI state), on this mutation callback
-      setForm({
-        customer_id: 0,
-        professional_id: 0,
-        service_id: 0,
-        status: "pending",
-        starts_at: ""
-      })
+      if (!appointment) {
+        setForm({
+          customer_id: 0,
+          professional_id: 0,
+          service_id: 0,
+          status: "pending",
+          starts_at: ""
+        })
+      }
     }
   })
 
@@ -87,7 +107,7 @@ export function AppointmentForm(){
 
 	return(
 		<form onSubmit={handleSubmit}>
-      <h2>Create appointment</h2>
+      <h2>{appointment ? "Edit appointment" : "Create appointment"}</h2>
 
       <label>
         Customer
@@ -163,7 +183,7 @@ export function AppointmentForm(){
       )}
 
       <button type="submit" disabled={createMutation.isPending}>
-        { createMutation.isPending ? "Creating" : "Create" }
+        {createMutation.isPending ? "Saving" : appointment ? "Save changes" : "Create"}
       </button>
     </form>
 	)

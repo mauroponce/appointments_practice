@@ -22,6 +22,10 @@ export function EditAppointmentPage() {
     return <p>Error: {error.message}</p>
   }
 
+  if (!appointment) {
+    return <p>Appointment not found.</p>
+  }
+
 	return (
 		<section id="center">
       <AppointmentForm appointment={appointment}/>

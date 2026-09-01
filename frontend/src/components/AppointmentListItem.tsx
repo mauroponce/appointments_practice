@@ -1,4 +1,4 @@
-import type { Appointment } from './types/appointment'
+import type { Appointment } from '../types/appointment'
 import { Link } from 'react-router-dom'
 
 
@@ -14,7 +14,7 @@ export function AppointmentListItem({ appointment } : AppointmentListItemProps) 
       ${appointment.price_cents}
       {" - "}
       {new Date(appointment.starts_at).toLocaleString()}
-      <Link to={`/appointments/${appointment.id}`}>Edit</Link>
+      <Link to={`/appointments/${appointment.id}/edit`}>Edit</Link>
     </li>
 	)
 }

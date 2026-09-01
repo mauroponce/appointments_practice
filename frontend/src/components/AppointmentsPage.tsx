@@ -1,7 +1,12 @@
 import { AppointmentList } from './AppointmentList'
 import { AppointmentForm } from './AppointmentForm'
+import type { Appointment } from '../types/appointment'
 
-export function AppointmentsPage({ appointments }) {
+interface AppointmentsPageProps {
+  appointments: Appointment[]
+}
+
+export function AppointmentsPage({ appointments }: AppointmentsPageProps) {
 	return(
 		<section id="center">
       <h1>Appointments</h1>

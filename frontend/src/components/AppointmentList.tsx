@@ -1,4 +1,4 @@
-import type { Appointment } from './types/appointment'
+import type { Appointment } from '../types/appointment'
 import { AppointmentListItem } from './AppointmentListItem'
 
 interface AppointmentListProps {
@@ -17,5 +17,4 @@ export function AppointmentList({ appointments } : AppointmentListProps){
     </ul>
   )
 }
-
 

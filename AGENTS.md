@@ -1,25 +1,46 @@
-# Rails conventions
+# App development guide
+
+This repository contains a Rails 8 JSON API and a separate Vite + React + TypeScript
+frontend in `frontend/`. Follow the nearest `AGENTS.md`; more-specific instructions
+supplement this file.
 
 ## Before changing code
-- Read the relevant models, tests, routes, and existing patterns first.
-- Follow existing project conventions when they differ from this file.
-- Use `bin/` commands, never global Rails/Bundler commands.
 
-## Application design
-- Prefer conventional Rails: RESTful routes, resource-oriented controllers, Active Record,
-  Active Job, and Action Mailer.
-- Keep controllers focused on HTTP concerns; put domain behavior near the model or in a
-  clearly named application object when it does not belong there.
-- Use Hotwire (Turbo and Stimulus) for interactive UI unless this project already uses
-  another frontend approach.
-- Avoid new gems or broad refactors unless the task calls for them.
+- Read the affected models, controllers, routes, tests, and frontend API client first.
+- Follow established project patterns; do not introduce a new framework, library, or
+  architectural layer unless the task requires it.
+- Use project commands (`bin/rails`, `bin/ci`, and `npm --prefix frontend run …`),
+  never globally installed Rails or Bundler commands.
+- Keep changes small, focused, and covered by tests.
 
-## Data and security
-- Write reversible, safe migrations and add appropriate database constraints and indexes.
-- Authorize every sensitive action using the project’s existing authorization approach.
-- Do not expose secrets, credentials, or internal data in logs or error messages.
+## Rails API
 
-## Quality
-- Add or update tests for behavior changes.
-- Run the narrowest relevant test first, then the project’s standard checks before handoff.
-- Preserve accessibility, responsive behavior, and server-rendered fallback where relevant.
+- Keep controllers focused on HTTP concerns. Put domain behavior in the model or a
+  clearly named application object only when it does not belong there.
+- Use RESTful routes and strong parameters. Scope every account-owned record through
+  `current_account`; never use an unscoped lookup for tenant data.
+- For schema changes, write reversible migrations and add appropriate database
+  constraints and indexes.
+- Preserve the API contract. When an endpoint response or validation changes, update
+  its request/controller tests and the React client/types together.
+- Do not log secrets, credentials, or sensitive customer information.
+
+## Frontend
+
+- The frontend is Vite + React, not Rails Hotwire. Follow `frontend/AGENTS.md` for
+  component, state, accessibility, and TypeScript conventions.
+- Keep server URLs and client-visible configuration explicit; never expose server-only
+  credentials to browser code.
+
+## Verification
+
+- Run the narrowest relevant test first, then the applicable quality checks before
+  handoff.
+- Rails: `bin/rails test`, `bin/rubocop`, and relevant security checks.
+- Frontend: `npm --prefix frontend run check`.
+- Run `bin/ci` before handing off cross-cutting or release-ready changes when the
+  local services are available.
+
+## Handoff
+
+- State what changed, which commands passed, and any assumptions or follow-up work.
