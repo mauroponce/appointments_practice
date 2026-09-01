@@ -15,13 +15,13 @@ class Api::V1::AppointmentsController < Api::V1::BaseController
     appointment = current_account.appointments.create!(
       resolved_appointment_attributes.merge(price_cents: selected_service.price_cents)
     )
-    
+
     render json: appointment, status: :created
   end
 
   def update
     @appointment.update!(resolved_appointment_attributes)
-  
+
     render json: @appointment
   end
 
@@ -29,15 +29,15 @@ class Api::V1::AppointmentsController < Api::V1::BaseController
     render json: {
       customers: current_account.customers.active
         .pluck(:id, :name)
-        .map{|id, name| { id:, name: }},
+        .map { |id, name| { id:, name: } },
 
       professionals: current_account.professionals.active
         .pluck(:id, :name)
-        .map{|id, name| { id:, name: }},
+        .map { |id, name| { id:, name: } },
 
       services: current_account.services.active
         .pluck(:id, :name)
-        .map{|id, name| { id:, name: }}
+        .map { |id, name| { id:, name: } }
     }
   end
 
